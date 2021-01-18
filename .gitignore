@@ -1,0 +1,6 @@
+/.idea/*
+/node_modules/*
+/tmp/*
+helpers.js
+rc_index.js
+/customChrome/*

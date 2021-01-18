@@ -1,0 +1,20 @@
+{
+  "name": "e-trans",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "bot": "node bot.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mongoose": "^5.11.12",
+    "puppeteer": "^5.5.0",
+    "telegraf": "^3.38.0",
+    "user-agents": "^1.0.559"
+  },
+  "description": ""
+}
