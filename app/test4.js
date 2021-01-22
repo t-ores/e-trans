@@ -4,14 +4,13 @@ const path = require('path');
 const xlsx = require('./index.js');
 
 const ConvertXLSXtoJSON = function() {
- console.log('xlsx: ', xlsx);
-
   const fileName = fs.readFileSync("./tmp/link/link.txt", "utf8");
-  console.log('ConvertXLSXtoJSON -> fileName : ', fileName);
+  console.log('fileName: ', fileName);
 
   const filePath = path.join(__dirname, '../tmp/xlsx/'+ fileName);
-  const newjson = path.join(__dirname, '../tmp/json/newjson.json');
-  const data = [];
+  const newjson = path.join(__dirname, '../tmp/json/'+fileName.slice(0, -5)+'.json');
+  fs.writeFileSync(newjson, '');
+ const data = [];
 
   const result = excelToJson({
    sourceFile: filePath,
@@ -34,7 +33,7 @@ const ConvertXLSXtoJSON = function() {
    data.push({
     item
    });
-   fs.writeFileSync(newjson, JSON.stringify(item));
+   fs.appendFileSync(newjson, JSON.stringify(item)+'\n');
   }
  });
   //console.log(result);
