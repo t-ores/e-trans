@@ -23,12 +23,12 @@ const getXLSX = async() => {
             slowMo: 100,
             ignoreHTTPSErrors:true,
             devtools: true,
-            args:['--disable-features=site-per-process','--no-sandbox']
+            //args:['--disable-features=site-per-process','--no-sandbox']
         });
 
         let page = await browser.newPage();
         await page.setUserAgent(userAgent.toString());
-     await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: downloads});
+        await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: downloads});
         let i = 0;
 
         //let dwnloadfilepage = await page;
