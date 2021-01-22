@@ -3,6 +3,7 @@ const path = require('path');
 const puppeteer = require ('puppeteer');
 const userAgent = require('user-agents');
 const func = require('./func.js');
+const killProcess = require('kill-process-by-name');
 
 let link = 'https://opendata.e-transport.gov.ua/PermitsRests/';
 
@@ -28,10 +29,7 @@ const getXLSX = async() => {
         await page.setUserAgent(userAgent.toString());
         let i = 0;
 
-        //let filename = '';
-
-
-        let dwnloadfilepage = await page;
+        //let dwnloadfilepage = await page;
         //waitFor-download-link
         console.log('waitFor-download-link');
         await page.goto(link, {waitUntil: 'domcontentloaded' });
@@ -47,7 +45,7 @@ const getXLSX = async() => {
 
         //**************get page cookies*****************
         let cookiesobj = await page.cookies();
-        console.log(cookiesobj);
+        //console.log(cookiesobj);
         //**************get page cookies*****************
 
         //***********setCookie***************************
@@ -68,9 +66,9 @@ const getXLSX = async() => {
         });
         /*LINK*/
         let dwnlink = result_link[0].link;
-        console.log(dwnlink);
+        //console.log(dwnlink);
 
-        console.log(`Current directory: ${process.cwd()}`);
+        //console.log(`Current directory: ${process.cwd()}`);
 
         //*******https://github.com/puppeteer/puppeteer/blob/main/docs/api.md#event-popup********
         /*
@@ -94,42 +92,45 @@ const getXLSX = async() => {
         console.log('click on download-link end');
 
         // current timestamp
-        //const time = await func.timestamp();
-		// current timestamp
+        //let time = await func.timestamp();
+        // current timestamp
 
-		//get XLSXfileName
-		const result = await page.evaluate(() => {
-	        let data = [];
-	        let link = document.querySelector('div#download-link>a').href;
-	        let sitetime = document.querySelector('#QV21>div>article>div.qv-inner-object>header>h1>div').innerText;
-	        sitetime = sitetime.slice(37,-1);
-	        let name = link.slice(90, -50);
-	        data.push({sitetime, name, link});
-	        return data;
-	    });
-        console.log(result);
-		//get XLSXfileName
+    //get XLSXfileName
+    const result = await page.evaluate(() => {
+         let data = [];
+         let link = document.querySelector('div#download-link>a').href;
+         let sitetime = document.querySelector('#QV21>div>article>div.qv-inner-object>header>h1>div').innerText;
+         sitetime = sitetime.slice(37,-1);
+         let name = link.slice(90, -50);
+         data.push({sitetime, name, link});
+         //console.log('data x: ', data);
+         return data;
+     });
+    //get XLSXfileName
+     //console.log(result[0]['name']);
 
-		//console.log(result[0].sitetime);
-		//console.log(time);
-        //************screenshot**************************
-        /*
-        await page.screenshot({
-            path: '../tmp/img/img_'+(i++)+'.png',
-            fullPage: true
-        });
-        */
-        //************screenshot**************************
+     //writeLinkInFile
+     let filenametxt = './tmp/link/link.txt';
+     await fs.writeFile(filenametxt, String(result[0]['name']), function (err) {
+      if(err) throw err;
+     });
+     //writeLinkInFile
 
-        //************close browser whis timeout**********
-		setTimeout(function(){
-				//browser.close();
-  		}, 5000);
+      //************close browser whis timeout**********
+        setTimeout(function(){
+         browser.close();
+         }, 5000);
         //************close browser whis timeout**********
 
-        //await browser.close();
+     //console.log(result);
+     killProcess('Chromium');
+     console.log('index.js -> getXLSX() end');
+     return result;
+
     }catch (e) {
         console.log(e);
     }
 };
 getXLSX();
+
+module.exports.xlsx = getXLSX;

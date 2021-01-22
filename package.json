@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "convert-excel-to-json": "^1.7.0",
+    "kill-process-by-name": "^1.0.5",
     "mongoose": "^5.11.12",
     "puppeteer": "^5.5.0",
     "telegraf": "^3.38.0",
