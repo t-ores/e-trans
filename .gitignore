@@ -1,6 +1,14 @@
 /.idea/*
 /node_modules/*
 /tmp/*
+!/tmp/img
+/tmp/img/*
+!/tmp/json
+/tmp/json/*
+!/tmp/xlsx
+/tmp/xlsx/*
+!/tmp/downloads
+!/tmp/link
 helpers.js
 rc_index.js
 /customChrome/*
