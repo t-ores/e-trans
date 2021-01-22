@@ -8,16 +8,17 @@ const killProcess = require('kill-process-by-name');
 let link = 'https://opendata.e-transport.gov.ua/PermitsRests/';
 
 /*-------------customChrome----------------------------------*/
-let customChrome = func.chrome();
+//let customChrome = func.chrome();
 /*-------------customChrome----------------------------------*/
 let dlttmpimgs = func.dlttmpimgs();
+let downloads = path.resolve(__dirname, '../tmp/downloads');
 
 
 //puppeteer.connect
 const getXLSX = async() => {
     try{
         let browser = await puppeteer.launch({
-            userDataDir: customChrome,
+            //userDataDir: customChrome,
             headless:false,
             slowMo: 100,
             ignoreHTTPSErrors:true,
@@ -27,6 +28,7 @@ const getXLSX = async() => {
 
         let page = await browser.newPage();
         await page.setUserAgent(userAgent.toString());
+     await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: downloads});
         let i = 0;
 
         //let dwnloadfilepage = await page;

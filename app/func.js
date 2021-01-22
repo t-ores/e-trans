@@ -59,6 +59,22 @@ var DeleteTMPjson = function() {
 module.exports.dlttmpjson = DeleteTMPjson;
 /*-------------DeleteTMPjson----------------------------------*/
 
+/*-------------DeleteTMPdownloads----------------------------------*/
+var DeleteTMPdownloads = function() {
+	const directory = path.resolve(__dirname, '../tmp/downloads');
+	fs.readdir(directory, (err, files) => {
+		if (err) throw err;
+		for (const file of files) {
+			fs.unlink(path.join(directory, file), err => {
+				if (err) throw err;
+			});
+		}
+	});
+};
+module.exports.dlttmpdownloads = DeleteTMPdownloads;
+/*-------------DeleteTMPdownloads----------------------------------*/
+
+
 /*-----------------GetJSON------------------------------------*/
 var GetJSON = function() {
 	const xobj = require('./json/x.json');
