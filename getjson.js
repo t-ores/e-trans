@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const xobj = require('./tmp/json/x.json');
+//const xobj = require('./tmp/json/x.json');
 
 const jj = JSON.stringify(xobj);
 

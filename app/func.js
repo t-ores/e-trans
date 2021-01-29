@@ -97,15 +97,15 @@ module.exports.getjson = GetJSON;
 
 
 /*--------------Convert XLSX to JSON--------------------------*/
-const ConvertXLSXtoJSON = async function() {
-	try{
-		await require('./index.js');
+function old_ConvertXLSXtoJSON() {
+
+		//await require('./index.js');
 		const excelToJson = require('convert-excel-to-json');
 		const fs = require('fs');
 		const path = require('path');
 
 		const fileName = fs.readFileSync("./tmp/link/link.txt", "utf8");
-		console.log(fileName);
+		//console.log(fileName);
 
 		const filePath = path.join(__dirname, '../tmp/xlsx/'+ fileName);
 		const newjson = path.join(__dirname, '../tmp/json/newjson.json');
@@ -126,21 +126,58 @@ const ConvertXLSXtoJSON = async function() {
 			}
 		});
 		return result;
-	}catch (e) {
-		console.log(e);
-	}
-};
-module.exports.convert = ConvertXLSXtoJSON;
-/*--------------Convert XLSX to JSON--------------------------*/
+}
 
-const TodayPermissions = function() {
+function ConvertXLSXtoJSON(fileName){
+
+	console.log('file name:', fileName);
 
 	const excelToJson = require('convert-excel-to-json');
 	const fs = require('fs');
 	const path = require('path');
 
-	const filePath = path.join(__dirname, '../tmp/xlsx/3e3190f0-e1b4-4d03-93ca-985c15ad6f6d.xlsx');
-	const newjson = path.join(__dirname, '../tmp/json/newjson.json');
+	//const fileName = fs.readFileSync("./tmp/link/link.txt", "utf8");
+	const filePath = path.join(__dirname, '../tmp/xlsx/'+ fileName);
+	const newjson = path.join(__dirname, '../tmp/json/'+fileName.slice(0, -5)+'.json');
+
+	const result = excelToJson({
+		sourceFile: filePath,
+		columnToKey: {
+			A: 'permission',
+			B: 'pvd',
+			C: 'country',
+			D: 'type',
+			E: 'year',
+			F: 'remainder',
+			G: 'today',
+			H: 'v_month',
+			I: 'v_year'
+		}
+	});
+
+	// for (var i = 0; i < result.Sheet1.length; i++) {
+	//  if((result.Sheet1[i].permission === 'Дозвіл вантажний')&&(result.Sheet1[i].today !== 0)&&(result.Sheet1[i].year === 2021)&&(result.Sheet1[i].country !== 'Білорусь')&&(result.Sheet1[i].country !== 'Туреччина')&&(result.Sheet1[i].country !== 'Македонія')&&(result.Sheet1[i].type === 'універсальний E5')){
+	//   console.dir(result.Sheet1[i]);
+	//  }
+	// }
+	//console.log(result.Sheet1);
+	fs.appendFileSync(newjson, JSON.stringify(result.Sheet1));
+
+	return result.Sheet1;
+}
+
+module.exports.Convert = ConvertXLSXtoJSON;
+/*--------------Convert XLSX to JSON--------------------------*/
+
+function TodayPermissions(){
+
+	const excelToJson = require('convert-excel-to-json');
+	const fs = require('fs');
+	const path = require('path');
+
+	const fileName = fs.readFileSync("./tmp/link/link.txt", "utf8");
+
+	const filePath = path.join(__dirname, '../tmp/xlsx/'+fileName);
 	const data = [];
 
 	const result = excelToJson({
@@ -159,15 +196,16 @@ const TodayPermissions = function() {
 	});
 
 	result.Sheet1.forEach(item =>{
-		if (item.today != 0){
+		if (item.today !== 0){
 			//console.log(i, item);
 			data.push({
 				item
 			});
 		}
 	});
+	//console.log(data);
 	return data;
-};
+}
 module.exports.PrmToday = TodayPermissions;
 
 

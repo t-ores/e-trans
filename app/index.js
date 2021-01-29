@@ -8,19 +8,21 @@ const killProcess = require('kill-process-by-name');
 let link = 'https://opendata.e-transport.gov.ua/PermitsRests/';
 
 /*-------------customChrome----------------------------------*/
-//let customChrome = func.chrome();
+let customChrome = func.chrome();
 /*-------------customChrome----------------------------------*/
 let dlttmpimgs = func.dlttmpimgs();
 let downloads = path.resolve(__dirname, '../tmp/xlsx');
 
 
 //puppeteer.connect
-const getXLSX = async() => {
+//function ParseTest(param, result = '') {
+async  function getXLSX(){
+ const res = [];
     try{
         let browser = await puppeteer.launch({
-            //userDataDir: customChrome,
+            userDataDir: customChrome,
             headless:false,
-            slowMo: 100,
+            //slowMo: 100,
             ignoreHTTPSErrors:true,
             devtools: true,
             args:['--no-sandbox']
@@ -130,12 +132,21 @@ const getXLSX = async() => {
      //console.log(result);
      //killProcess('Chromium');
      //killProcess('chrome');
+     let xlsxName = String(result[0]['name']);
+     let conv = func.Convert(xlsxName);
+     //console.log('conv: ', conv[0]);
      //return result;
 
     }catch (e) {
         console.log(e);
+    }finally {
+     console.log('finito...');
     }
-};
+}
 getXLSX();
+// let vvv = getXLSX();
+// console.log(vvv);
 
-module.exports.xlsx = getXLSX;
+module.exports = {
+ getXLSX: getXLSX
+};
