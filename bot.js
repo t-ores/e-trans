@@ -1,5 +1,6 @@
 const { Telegraf } = require('telegraf');
-const token = '1459568288:AAE9SHrNmGZH07szvYGzlc9Y1Rd1LQ4qOHs'; //
+const conf = require('./config.json');
+const token = conf[0].token;
 const bot = new Telegraf(token);
 //const parse = require('./parsejson.js');
 //const getjson = require('./getjson.js');
