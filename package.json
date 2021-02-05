@@ -11,13 +11,21 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.21.1",
     "convert-excel-to-json": "^1.7.0",
     "kill-process-by-name": "^1.0.5",
     "mongoose": "^5.11.12",
+    "nodemon": "^2.0.7",
     "puppeteer": "^5.5.0",
     "telegraf": "^3.38.0",
     "user-agents": "^1.0.559"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/t-ores/e-trans.git"
+  },
+  "bugs": {
+    "url": "https://github.com/t-ores/e-trans/issues"
+  },
+  "homepage": "https://github.com/t-ores/e-trans#readme",
   "description": ""
 }
