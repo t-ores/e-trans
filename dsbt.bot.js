@@ -110,7 +110,7 @@ async function getdata(){
 
   //if((cb_perm !== '')&&(cb_perm === 'DV')){
    //console.log(cb_perm);
-   if ((item.today !== 0)&&(item.today !== 'Видано сьогодні')&&(item.permission === 'Дозвіл вантажний')){
+   if ((item.today > 20)&&(item.today !== 'Видано сьогодні')&&(item.permission === 'Дозвіл вантажний')){
     let res = `${item.permission}
 <b>ПВД:</b> <a href="www.google.com/search?q=ПВД+${item.pvd}">${item.pvd}</a>
 <b>Країна дозволу:</b> ${item.country}
@@ -166,7 +166,7 @@ bot.action('actualizeData', (ctx) =>{
  ctx.telegram.sendMessage(ctx.chat.id, 'Wait...');
  //aData = ctx.match;
  //console.log(aData);
- update()
+    update()
   .then((result)=>{
    /**/
    //console.log('actualizeData result[0]', result[0]);
@@ -186,9 +186,9 @@ bot.action('actualizeData', (ctx) =>{
 
 async function update(){
  try {
-  const index = require('./app/index');
-  await index.getXLSX();
-  console.log('log here 173');
+  //const index = require('./app/index');
+  func.getXLSX();
+  console.log('log here 191');
  }catch (e) {
   console.log(e);
  }finally {

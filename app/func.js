@@ -127,37 +127,8 @@ module.exports.getjson = GetJSON;
 
 
 /*--------------Convert XLSX to JSON--------------------------*/
-function old_ConvertXLSXtoJSON() {
-		//await require('./index.js');
-		const excelToJson = require('convert-excel-to-json');
-		const fs = require('fs');
-		const path = require('path');
 
-		const fileName = fs.readFileSync("./tmp/link/link.txt", "utf8");
-		//console.log(fileName);
-
-		const filePath = path.join(__dirname, '../tmp/xlsx/'+ fileName);
-		const newjson = path.join(__dirname, '../tmp/json/newjson.json');
-		const data = [];
-
-		const result = excelToJson({
-			sourceFile: filePath,
-			columnToKey: {
-				A:'permission',
-				B:'pvd',
-				C:'country',
-				D:'type',
-				E:'year',
-				F:'remainder',
-				G:'today',
-				H:'v_month',
-				I:'v_year'
-			}
-		});
-		return result;
-}
-
-function ConvertXLSXtoJSON(fileName){
+async function ConvertXLSXtoJSON(fileName){
 	console.log('file name:', fileName);
 	const excelToJson = require('convert-excel-to-json');
 	const fs = require('fs');
@@ -181,9 +152,9 @@ function ConvertXLSXtoJSON(fileName){
 			I: 'v_year'
 		}
 	});
-	fs.appendFileSync(newjson, JSON.stringify(result.Sheet1));
+	await fs.appendFileSync(newjson, JSON.stringify(result.Sheet1));
 	//fs.appendFileSync(newjson, JSON.stringify(result));
-	fs.writeFileSync(linktxt, fileName);
+	await fs.writeFileSync(linktxt, fileName);
 
 	return result.Sheet1;
 	//return result;
@@ -249,3 +220,143 @@ var Schema = function() {
 	const fetch = require('node-fetch');
 };
 /*-----------------MONGOOS MODEL------------------------------*/
+/*-------------------getName----------------------------------*/
+// function getName(){
+// 	const fs = require('fs');
+// 	let Name = fs.readFileSync("./tmp/link/link.txt", "utf8");
+// 	let fileName = Name.slice(0, -5)+'.json';
+// 	return fileName;
+// }
+// module.exports = {getName};
+/*--------------------getName---------------------------------*/
+/*-------------------getCategoryes----------------------------*/
+async function getCategorys(){
+	const fs = require('fs');
+	const path = require('path');
+	//
+	let Name = fs.readFileSync("./tmp/link/link.txt", "utf8");
+	const fileName = Name.slice(0, -5)+'.json';
+	// console.log(Name);
+	// let obj = fs.readFile('./tmp/json/'+Name, function (){
+	// 	const strJson = JSON.stringify(obj);
+	// 	console.log(strJson);
+	// });
+	const jobj = require('./tmp/json/'+fileName);
+	const strJson = await JSON.stringify(jobj);
+	const parseJson = await JSON.parse(strJson, function(key, variable) {
+		if (key === ''){
+			return variable;
+		}
+		return variable;
+	});
+	console.log(parseJson);
+	return parseJson;
+}
+module.exports = {getCategorys};
+/*-------------------getCategoryes----------------------------*/
+
+/*-------------------_getXLSX_----------------------------*/
+//const fs = require('fs');
+//const path = require('path');
+const puppeteer = require ('puppeteer');
+const userAgent = require('user-agents');
+//const func = require('./func.js');
+const killProcess = require('kill-process-by-name');
+
+let link = 'https://opendata.e-transport.gov.ua/PermitsRests/';
+
+/*-------------customChrome----------------------------------*/
+//let customChrome = func.chrome;
+//console.log(customChrome);
+/*-------------customChrome----------------------------------*/
+let downloads = path.resolve(__dirname, '../tmp/xlsx');
+
+
+
+async function getXLSX(){
+	try{
+		let browser = await puppeteer.launch({
+			//userDataDir: '../customChrome',
+			headless:false,
+			ignoreHTTPSErrors:true,
+			//devtools: true,
+			slowMo: 50,
+			args:['--disable-features=site-per-process','--no-sandbox']
+		});
+
+		const pages = await browser.pages();
+		const page = pages[0];
+		await page.setUserAgent(userAgent.toString());
+		await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: downloads});
+
+		console.log('waitFor-download-link');
+		await page.goto(link, {waitUntil: 'domcontentloaded' });
+		await page.waitForSelector('div.export-data');
+		const selector = await page.$('div.export-data');
+		await selector.click();
+		await page.waitForSelector('button#doExport');
+		const button = await page.$('button#doExport');
+		await button.click();
+		await page.waitForSelector('div#download-link>a');
+		console.log('waitFor-download-link end');
+
+		// click on download-link
+		await page.waitForSelector('div#download-link>a');
+		const filedwnldlink = await page.$('div#download-link>a');
+		await filedwnldlink.click();
+		// click on download-link end
+		console.log('click on download-link end');
+
+		//get XLSXfileName
+		const result = await page.evaluate(() => {
+			let data = [];
+			let link = document.querySelector('div#download-link>a').href;
+			let sitetime = document.querySelector('#QV21>div>article>div.qv-inner-object>header>h1>div').innerText;
+			sitetime = sitetime.slice(37,-1);
+			let name = link.slice(90, -50);
+			data.push({
+				sitetime,
+				name,
+				link
+			});
+			return data;
+		});
+		//get XLSXfileName
+
+
+		let xlsxName = await String(result[0]['name']);
+		//let conv = Convert(xlsxName);
+		let conv = await ConvertXLSXtoJSON(xlsxName);
+		//return conv;
+		//func.prmToday(xlsxName);
+		//console.log('conv: ', conv);
+
+		//************close browser whis timeout**********
+		await setTimeout(function(){
+			console.log('timeout...');
+		}, 5000);
+
+		//await Promise.all(pages.map(page =>page.close()));
+		await browser.close();
+		//************close browser whis timeout**********
+
+		await isRunning('сhrome.exe', (status) => {
+			do {
+				killProcess('Chromium');
+				console.log('process Chromium kill');
+			} while (status === true);
+		});
+		return conv;
+
+	}catch (e) {
+		console.log(e);
+	}finally {
+		console.log('finito...');
+	}
+}
+
+// module.exports = {
+// 	getXLSX: getXLSX
+// };
+module.exports.getXLSX = getXLSX;
+/*-------------------_getXLSX_----------------------------*/

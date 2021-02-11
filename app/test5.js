@@ -78,6 +78,50 @@ function ConvertXLSXtoJSON(){
  return result.Sheet1;
 }
 
-ConvertXLSXtoJSON();
+
+async function getCategorys(){
+ const fs = require('fs');
+ const path = require('path');
+ //
+ let Name = fs.readFileSync("./tmp/link/link.txt", "utf8");
+ const fileName = Name.slice(0, -5)+'.json';
+ const jobj = require('../tmp/json/'+fileName);
+ const strJson = await JSON.stringify(jobj);
+ const parseJson = await JSON.parse(strJson, function(key, variable) {
+  if (key === ''){
+   return variable;
+  }
+  return variable;
+ });
+ //console.log(parseJson.length);
+ const data = [];
+
+ // parseJson.forEach(item=>{
+ //  console.log('1:', data)
+ //  if(data.includes(item.pvd, 1)){
+ //   console.log('includ:');
+ //  }else {
+ //   data.push([
+ //       item.pvd
+ //   ]);
+ //  }
+ // });
+
+ for(let i=0; i<parseJson.length; i++){
+ if(data.includes(parseJson[i].pvd, 1)){
+  console.log('yes');
+ }else{
+  console.log('no');
+  data.push([parseJson[i].pvd]);
+  fs.appendFileSync('../tmp/categoryes.txt', JSON.stringify(parseJson[i].pvd));
+ }
+}
+
+console.log(data);
+
+}
+getCategorys();
+
+//ConvertXLSXtoJSON();
 
 //TodayPermissions();

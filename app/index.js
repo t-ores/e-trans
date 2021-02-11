@@ -67,8 +67,8 @@ async function getXLSX(){
 
 
         let xlsxName = await String(result[0]['name']);
-        //let conv = await func.Convert(xlsxName);
-        await func.Convert(xlsxName);
+        let conv = await func.Convert(xlsxName);
+        //await func.Convert(xlsxName);
         //return conv;
         //func.prmToday(xlsxName);
         //console.log('conv: ', conv);
